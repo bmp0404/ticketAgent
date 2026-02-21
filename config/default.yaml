@@ -1,0 +1,25 @@
+# Ticket AI Agent – default configuration (Goal 7)
+# Tune weights and policies here; no code changes required.
+
+prioritization:
+  weights:
+    impact: 1.0
+    urgency: 1.0
+    effort: -1.0
+    staleness: 0.5
+  # Staleness cap for idle-time reprioritization (Goal 5)
+  staleness:
+    max_cap: 10
+    scaling_factor_days: 7
+    exclude_labels: [wontfix, icebox]
+
+bounty:
+  min: 25
+  max: 500
+  # Base by effort size (XS/S/M/L)
+  base_by_size:
+    XS: 50
+    S: 100
+    M: 250
+    L: 500
+  priority_multiplier_range: [0.8, 1.2]

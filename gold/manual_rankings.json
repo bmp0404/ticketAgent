@@ -1,0 +1,4 @@
+{
+  "_comment": "Human-ranked gold dataset (~30 tickets). Format: ticket_id -> bucket (High | Medium | Low) or rank order. Replace with real data.",
+  "ticket_id_to_bucket": {}
+}

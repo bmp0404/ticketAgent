@@ -1,0 +1,20 @@
+# Ticket AI Agent – Python dependencies
+# Install: pip install -r requirements.txt
+
+# GitHub API
+PyGithub>=2.0.0
+
+# Config
+PyYAML>=6.0
+
+# Database (SQLite built-in; use for local)
+# For Postgres later: psycopg2-binary or asyncpg
+
+# CLI (optional: richer than argparse)
+# click>=8.0
+
+# Testing
+pytest>=7.0.0
+
+# Environment
+python-dotenv>=1.0.0
