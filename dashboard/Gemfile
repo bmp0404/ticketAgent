@@ -1,0 +1,13 @@
+# Ticket Agent Dashboard – Ruby dependencies
+# Install: bundle install
+# Run:    bundle exec ruby app.rb
+
+source "https://rubygems.org"
+
+gem "sinatra", "~> 3.0"
+gem "erubi"   # ERB implementation (Sinatra uses this)
+
+# Optional: live reload during development
+group :development do
+  gem "rerun"
+end
