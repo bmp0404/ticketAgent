@@ -1,0 +1,38 @@
+<% @title = "Bounties - Ticket Agent" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Bounties</h2>
+  <a href="/" class="btn btn-outline-light">← Dashboard</a>
+</div>
+
+<% if @sprint %>
+  <p class="text-muted">Sprint: <strong><%= @sprint %></strong></p>
+<% end %>
+
+<% if @featured_tickets.any? %>
+  <div class="row g-3">
+    <% @featured_tickets.each do |ticket| %>
+      <div class="col-12">
+        <div class="card" style="transition: transform 0.15s; cursor: pointer;" onclick="window.location='/ticket/<%= ticket[:id] %>'">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <span class="badge bg-secondary me-2">#<%= ticket[:id] %></span>
+                <span class="badge bg-info me-2"><%= ticket[:type] %></span>
+                <h5 class="card-title d-inline mb-1"><%= ticket[:title] %></h5>
+                <p class="card-text text-muted small mb-0"><%= truncate(ticket[:description], length: 120) %></p>
+              </div>
+              <span class="text-success fw-bold ms-3"><%= number_with_delimiter(ticket[:bounty]) %> pts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <p class="text-muted mb-0">No bounties yet. Sync and rank your repo to see tickets here.</p>
+    </div>
+  </div>
+<% end %>

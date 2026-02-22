@@ -1,0 +1,29 @@
+<% @title = "Leaderboard - Ticket Agent" %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Leaderboard</h2>
+  <a href="/" class="btn btn-outline-light">← Dashboard</a>
+</div>
+
+<% if @top_contributors.any? %>
+  <div class="card">
+    <div class="list-group list-group-flush">
+      <% @top_contributors.each_with_index do |c, idx| %>
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <span class="text-muted me-2">#<%= idx + 1 %></span>
+            <span class="fw-bold"><%= c[:name] %></span>
+            <span class="text-muted small">(<%= c[:bounties_completed] %> bounties)</span>
+          </div>
+          <span class="text-success fw-bold"><%= number_with_delimiter(c[:total_earned]) %> pts</span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <p class="text-muted mb-0">No contributors yet. Complete bounties to appear here.</p>
+    </div>
+  </div>
+<% end %>

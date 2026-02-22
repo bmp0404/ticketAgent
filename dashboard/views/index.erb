@@ -1,0 +1,155 @@
+<% @title = "Dashboard - Ticket Agent" %>
+
+<!-- Hero -->
+<div class="text-center mb-5">
+  <h1 class="display-5 fw-bold mb-3">Build with Ticket Agent</h1>
+  <p class="lead text-muted mx-auto" style="max-width: 600px;">
+    Prioritize GitHub issues, earn bounties, and track progress. Every contribution — code, docs, design — is scored and ranked with clear explanations.
+  </p>
+  <div class="d-flex justify-content-center gap-3 mt-4">
+    <a href="/bounties" class="btn btn-primary btn-lg px-4">Browse Bounties</a>
+    <a href="/leaderboard" class="btn btn-outline-light btn-lg px-4">Leaderboard</a>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="row g-3 mb-5">
+  <div class="col-6 col-md">
+    <div class="card stat-card">
+      <div class="stat-value"><%= @stats[:open_tickets] %></div>
+      <div class="stat-label">Open Tickets</div>
+    </div>
+  </div>
+  <div class="col-6 col-md">
+    <div class="card stat-card">
+      <div class="stat-value"><%= number_with_delimiter(@stats[:total_bounty_pool]) %></div>
+      <div class="stat-label">Bounty Pool</div>
+    </div>
+  </div>
+  <div class="col-6 col-md">
+    <div class="card stat-card">
+      <div class="stat-value"><%= @stats[:completed_tickets] %></div>
+      <div class="stat-label">Completed</div>
+    </div>
+  </div>
+  <div class="col-6 col-md">
+    <div class="card stat-card">
+      <div class="stat-value"><%= @stats[:contributors] %></div>
+      <div class="stat-label">Contributors</div>
+    </div>
+  </div>
+  <div class="col-6 col-md">
+    <div class="card stat-card">
+      <div class="stat-value"><%= number_with_delimiter(@stats[:total_paid]) %></div>
+      <div class="stat-label">Total Paid Out</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Featured / Top Priority -->
+  <div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0">Top Priority Tickets</h4>
+      <a href="/bounties" class="text-decoration-none">View All →</a>
+    </div>
+
+    <% if @featured_tickets.any? %>
+      <div class="row g-3">
+        <% @featured_tickets.each do |ticket| %>
+          <div class="col-md-6">
+            <div class="card h-100" style="transition: transform 0.15s; cursor: pointer;"
+                 onmouseover="this.style.transform='translateY(-2px)'"
+                 onmouseout="this.style.transform='translateY(0)'"
+                 onclick="window.location='/ticket/<%= ticket[:id] %>'">
+              <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <% type_colors = { 'bug' => 'danger', 'feature' => 'primary', 'documentation' => 'info', 'design' => 'warning', 'testing' => 'success' } %>
+                  <span class="badge bg-<%= type_colors[ticket[:type]] || 'secondary' %>" style="font-size: 0.65rem;">
+                    <%= ticket[:type] %>
+                  </span>
+                  <span class="fw-bold text-success small"><%= number_with_delimiter(ticket[:bounty]) %> pts</span>
+                </div>
+                <h6 class="card-title mb-1" style="font-size: 0.9rem;"><%= truncate(ticket[:title], length: 60) %></h6>
+                <p class="card-text text-muted mb-0" style="font-size: 0.75rem;">
+                  <%= truncate(ticket[:description], length: 80) %>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="card">
+        <div class="card-body text-center py-4">
+          <p class="text-muted mb-0">Run <code>sync</code> and <code>rank</code> to see prioritized tickets. Check back after syncing your repo.</p>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Active Sprints -->
+    <% if @sprint_labels.any? %>
+      <h4 class="mt-4 mb-3">Active Sprints</h4>
+      <div class="d-flex flex-wrap gap-2">
+        <% @sprint_labels.each do |label, count| %>
+          <a href="/bounties?sprint=<%= ERB::Util.url_encode(label) %>" class="btn btn-outline-info btn-sm">
+            <%= label %> <span class="badge bg-info ms-1"><%= count %></span>
+          </a>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="col-lg-4">
+    <!-- Recent Completions -->
+    <div class="card mb-4">
+      <div class="card-header"><h6 class="mb-0">Recent Completions</h6></div>
+      <div class="card-body p-0">
+        <% if @recent_completions.any? %>
+          <div class="list-group list-group-flush">
+            <% @recent_completions.each do |bounty| %>
+              <div class="list-group-item" style="background: transparent;">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="small"><%= truncate(bounty[:title], length: 40) %></div>
+                    <div class="text-muted" style="font-size: 0.7rem;">
+                      by <%= bounty[:claimed_by] || 'contributor' %>
+                      · <%= time_ago_in_words(bounty[:approved_at]) %>
+                    </div>
+                  </div>
+                  <span class="text-success small fw-bold"><%= bounty[:points] %></span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="p-3 text-muted text-center small">No completions yet</div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Top Contributors -->
+    <div class="card">
+      <div class="card-header"><h6 class="mb-0">Top Contributors (90d)</h6></div>
+      <div class="card-body p-0">
+        <% if @top_contributors.any? %>
+          <div class="list-group list-group-flush">
+            <% @top_contributors.each_with_index do |contributor, idx| %>
+              <div class="list-group-item d-flex justify-content-between align-items-center" style="background: transparent;">
+                <div>
+                  <span class="text-muted me-2">#<%= idx + 1 %></span>
+                  <span class="small"><%= contributor[:name] %></span>
+                  <span class="text-muted" style="font-size: 0.7rem;">(<%= contributor[:bounties_completed] %> bounties)</span>
+                </div>
+                <span class="text-success small fw-bold"><%= number_with_delimiter(contributor[:total_earned]) %> pts</span>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="p-3 text-muted text-center small">Be the first contributor!</div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
