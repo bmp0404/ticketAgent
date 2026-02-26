@@ -1,0 +1,15 @@
+# Supabase (PostgreSQL). Set DATABASE_URL in .env from Supabase Dashboard → Connect → Connection string (Session pooler).
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+  url: <%= ENV["DATABASE_URL"] %>
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
