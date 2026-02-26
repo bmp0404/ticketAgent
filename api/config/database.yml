@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+# Use Supabase Postgres. Session pooler URI required (not Direct connection).
+# Session pooler: aws-0-<region>.pooler.supabase.com:5432 or :6543
+# Set DATABASE_URL in .env (e.g. postgresql://postgres.[ref]:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres)
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  url: <%= ENV["DATABASE_URL"] %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

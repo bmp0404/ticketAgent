@@ -73,12 +73,38 @@ dashboard/
     └── ticket.erb      # Single ticket detail
 ```
 
-## Wiring to the real backend later
+## Wiring to the Tickets API and Supabase Realtime
 
-- **Stats / tickets**: Replace the `stats`, `featured_tickets`, `recent_completions`, `top_contributors`, and `sprint_labels` methods in `app.rb` with:
-  - HTTP calls to a future Python API (e.g. `/api/rank`, `/api/stats`), or
-  - Reads from the agent’s SQLite DB (e.g. via a small Ruby library or a thin API from the Python CLI).
-- **Config**: The app can already load `../config/default.yaml`; use it for display or to drive API requests.
+The dashboard can load tickets from the **GitHub Tickets API** (Rails app in `../api`) and get **realtime updates** via Supabase.
+
+1. **Copy env**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Optional – load tickets from API**
+   - In `.env` set:
+     - `TICKETS_API_URL=http://localhost:3000` (Rails API base URL)
+     - `REPO_IDENTIFIER=owner/repo` (e.g. `rails/rails`)
+   - Stats and featured tickets will come from the API’s stored tickets (Supabase). Run a sync from the API first (e.g. `rails tickets:sync` or `POST /api/v1/repos/owner/repo/sync`).
+
+3. **Optional – realtime updates**
+   - In `.env` set:
+     - `SUPABASE_URL=https://xxxx.supabase.co`
+     - `SUPABASE_ANON_KEY=eyJ...`
+   - In Supabase, enable Realtime for the `tickets` table:
+     ```sql
+     ALTER PUBLICATION supabase_realtime ADD TABLE tickets;
+     ```
+   - When the API (or a GitHub webhook) updates tickets in Supabase, the dashboard will auto-refresh.
+
+4. **GitHub webhook (API)**
+   - Point GitHub repo webhooks (issues, issue_comment) at `POST /api/v1/webhooks/github`. The API will upsert tickets into Supabase; the dashboard’s Supabase Realtime subscription will then show updates.
+
+## Legacy / mock data
+
+- **Stats / tickets**: If `TICKETS_API_URL` and `REPO_IDENTIFIER` are not set, the dashboard uses in-memory mock data.
+- **Config**: The app can load `../config/default.yaml` for display or to drive API requests.
 
 ## Port
 

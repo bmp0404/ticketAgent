@@ -61,7 +61,7 @@
             <div class="card h-100" style="transition: transform 0.15s; cursor: pointer;"
                  onmouseover="this.style.transform='translateY(-2px)'"
                  onmouseout="this.style.transform='translateY(0)'"
-                 onclick="window.location='/ticket/<%= ticket[:id] %>'">
+                 onclick="window.location='/ticket/<%= ERB::Util.url_encode(ticket[:id].to_s) %>'">
               <div class="card-body py-3">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                   <% type_colors = { 'bug' => 'danger', 'feature' => 'primary', 'documentation' => 'info', 'design' => 'warning', 'testing' => 'success' } %>

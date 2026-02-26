@@ -1,0 +1,9 @@
+/.bundle
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+.env
+*.pid
+*.sock
+.DS_Store

@@ -13,11 +13,11 @@
   <div class="row g-3">
     <% @featured_tickets.each do |ticket| %>
       <div class="col-12">
-        <div class="card" style="transition: transform 0.15s; cursor: pointer;" onclick="window.location='/ticket/<%= ticket[:id] %>'">
+        <div class="card" style="transition: transform 0.15s; cursor: pointer;" onclick="window.location='/ticket/<%= ERB::Util.url_encode(ticket[:id].to_s) %>'">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-start">
               <div class="flex-grow-1">
-                <span class="badge bg-secondary me-2">#<%= ticket[:id] %></span>
+                <span class="badge bg-secondary me-2"><%= ticket[:id].to_s.include?("#") ? ticket[:id] : "##{ticket[:id]}" %></span>
                 <span class="badge bg-info me-2"><%= ticket[:type] %></span>
                 <h5 class="card-title d-inline mb-1"><%= ticket[:title] %></h5>
                 <p class="card-text text-muted small mb-0"><%= truncate(ticket[:description], length: 120) %></p>
